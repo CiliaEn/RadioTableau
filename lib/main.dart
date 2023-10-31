@@ -72,7 +72,7 @@ class _MyHomePageState extends State<MyHomePage> {
   String _firstProgramName = 'no sé';
 
   void _fetchData() async {
-    const channelID = '164'; // Set your channel ID here
+    const channelID = '132';
 
     Response response = await dio
         .get('https://api.sr.se/v2/scheduledepisodes?channelid=$channelID');
@@ -142,7 +142,6 @@ class _MyHomePageState extends State<MyHomePage> {
                   return ListTile(
                     title: Text(_scheduleEpisodes[index].title),
                     subtitle: Text(_scheduleEpisodes[index].description),
-                    // You can display more information here as needed
                   );
                 },
               ),
