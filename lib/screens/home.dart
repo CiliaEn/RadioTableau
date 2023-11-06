@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart'; // Import Provider package
+import 'package:provider/provider.dart';
+import 'package:radiotableau/utils/constants.dart';
 import 'package:radiotableau/models/episode.dart';
 import 'package:radiotableau/provider/episode_list_provider.dart';
 import 'package:radiotableau/services/api_service.dart';
@@ -16,7 +17,8 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final apiService = ApiService();
-  bool showAllTodaysEpisodes = false;
+  bool showAllTodayEpisodes =
+      false; // Flag to control showing all today's episodes
 
   @override
   void initState() {
@@ -29,9 +31,14 @@ class _MyHomePageState extends State<MyHomePage> {
         .fetchYesterdaysEpisodes();
     await Provider.of<EpisodeListProvider>(context, listen: false)
         .fetchTodaysEpisodes();
-
     await Provider.of<EpisodeListProvider>(context, listen: false)
         .fetchTomorrowsEpisodes();
+  }
+
+  void toggleShowAllTodayEpisodes() {
+    setState(() {
+      showAllTodayEpisodes = !showAllTodayEpisodes;
+    });
   }
 
   @override
@@ -65,11 +72,25 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  const TabBar(
-                    tabs: <Widget>[
-                      Tab(text: 'Yesterday'),
-                      Tab(text: 'Today'),
-                      Tab(text: 'Tomorrow'),
+                  TabBar(
+                    labelColor: Colors.black,
+                    onTap: (int index) {
+                      if (index < 3) {
+                        if (showAllTodayEpisodes) {
+                          toggleShowAllTodayEpisodes();
+                        }
+                      }
+                    },
+                    indicator: const UnderlineTabIndicator(
+                      borderSide: BorderSide(color: Colors.black),
+                    ),
+                    labelStyle: const TextStyle(fontWeight: FontWeight.bold),
+                    unselectedLabelStyle: const TextStyle(
+                        color: Colors.grey), // Set the tab text color to black
+                    tabs: const <Widget>[
+                      Tab(text: 'Igår'),
+                      Tab(text: 'Idag'),
+                      Tab(text: 'Imorgon'),
                     ],
                   ),
                   Expanded(
@@ -77,8 +98,13 @@ class _MyHomePageState extends State<MyHomePage> {
                       children: <Widget>[
                         _buildScheduleListForDay(
                             episodeListProvider.yesterdaysEpisodes),
-                        _buildScheduleListForDay(
-                            episodeListProvider.filteredTodayEpisodes),
+                        showAllTodayEpisodes
+                            ? _buildScheduleListForDay(
+                                episodeListProvider.todaysEpisodes,
+                                showAll: showAllTodayEpisodes)
+                            : _buildScheduleListForDay(
+                                episodeListProvider.filteredTodayEpisodes,
+                                showAll: showAllTodayEpisodes),
                         _buildScheduleListForDay(
                             episodeListProvider.tomorrowsEpisodes),
                       ],
@@ -93,14 +119,29 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  Widget _buildScheduleListForDay(List<Episode> episodes) {
-    return ListView.builder(
-      itemCount: episodes.length,
-      itemBuilder: (context, index) {
-        return EpisodeListItem(
-          episode: episodes[index],
-        );
-      },
+  Widget _buildScheduleListForDay(List<Episode> episodes,
+      {bool showAll = true}) {
+    return Column(
+      children: [
+        if (!showAll)
+          ElevatedButton(
+            onPressed: toggleShowAllTodayEpisodes,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Constants.themeColor,
+            ),
+            child: const Text('Visa tidigare avsnitt'),
+          ),
+        Expanded(
+          child: ListView.builder(
+            itemCount: episodes.length,
+            itemBuilder: (context, index) {
+              return EpisodeListItem(
+                episode: episodes[index],
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 }

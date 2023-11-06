@@ -13,7 +13,7 @@ class EpisodeListItem extends StatelessWidget {
         DateFormat.Hm().format(DateTime.parse(episode.startTimeCET));
 
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: Colors.white,
