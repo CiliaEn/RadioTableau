@@ -38,6 +38,8 @@ dependencies:
   dio: ^5.3.3
   xml: ^6.3.0
   intl: ^0.18.1
+  flutter_redux: ^0.10.0
+  provider: ^6.0.5
 
 dev_dependencies:
   flutter_test:

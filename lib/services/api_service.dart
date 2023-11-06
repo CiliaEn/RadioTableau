@@ -1,24 +1,27 @@
 import 'package:dio/dio.dart';
-import 'package:radiotableau/models/schedule_episode.dart';
+import 'package:intl/intl.dart';
+import 'package:radiotableau/models/episode.dart';
 import 'package:radiotableau/utils/constants.dart';
 import 'package:xml/xml.dart';
-import 'package:intl/intl.dart';
 
 class ApiService {
   final dio = Dio();
 
-  Future<List<ScheduleEpisode>> fetchData() async {
+  Future<List<Episode>> fetchData(String? date, {int page = 1}) async {
     const String channelID = Constants.channelID;
+    final inputFormat = DateFormat('yyyy-MM-ddTHH:mm:ssZ');
+    final outputFormat = DateFormat('yyyy-MM-dd HH:mm:ss.SSSSSS');
 
     try {
-      Response response = await dio
-          .get('https://api.sr.se/v2/scheduledepisodes?channelid=$channelID');
+      final response = await dio.get(
+        'https://api.sr.se/v2/scheduledepisodes?channelid=$channelID&date=$date&page=$page',
+      );
 
       final document = XmlDocument.parse(response.data);
 
       final scheduleElements = document.findAllElements('scheduledepisode');
 
-      List<ScheduleEpisode> scheduleEpisodes = scheduleElements.map((element) {
+      final episodes = scheduleElements.map((element) {
         final title = element.findElements('title').isNotEmpty
             ? element.findElements('title').single.innerText
             : '';
@@ -31,36 +34,41 @@ class ApiService {
         final endTimeUtc = element.findElements('endtimeutc').isNotEmpty
             ? element.findElements('endtimeutc').single.innerText
             : '';
-        final programId = element.findElements('program').isNotEmpty
-            ? element.findElements('program').first.getAttribute('id')
-            : '';
+
+        final startTime = inputFormat.parse(startTimeUtc);
+        final startTimeCET =
+            outputFormat.format(startTime.add(const Duration(hours: 1)));
+
+        final endTime = inputFormat.parse(endTimeUtc);
+        final endTimeCET =
+            outputFormat.format(endTime.add(const Duration(hours: 1)));
+
         final programName = element.findElements('program').isNotEmpty
             ? element.findElements('program').first.getAttribute('name')
-            : '';
-        final channelId = element.findElements('channel').isNotEmpty
-            ? element.findElements('channel').first.getAttribute('id')
-            : '';
-        final channelName = element.findElements('channel').isNotEmpty
-            ? element.findElements('channel').first.getAttribute('name')
             : '';
         final imageUrl = element.findElements('imageurl').isNotEmpty
             ? element.findElements('imageurl').single.innerText
             : '';
 
-        return ScheduleEpisode(
+        return Episode(
           title: title,
           description: description,
-          startTimeUtc: startTimeUtc,
-          endTimeUtc: endTimeUtc,
-          programId: programId,
+          startTimeCET: startTimeCET,
+          endTimeCET: endTimeCET,
           programName: programName,
-          channelId: channelId,
-          channelName: channelName,
           imageUrl: imageUrl,
         );
       }).toList();
 
-      return scheduleEpisodes;
+      final totalPagesElement = document.findAllElements('totalpages').first;
+      final totalPages = int.parse(totalPagesElement.text);
+
+      if (page < totalPages) {
+        final nextPage = page + 1;
+        episodes.addAll(await fetchData(date, page: nextPage));
+      }
+
+      return episodes;
     } catch (e) {
       print('Error fetching data: $e');
       return [];

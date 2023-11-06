@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:radiotableau/models/schedule_episode.dart';
+import 'package:radiotableau/models/episode.dart';
 import 'package:intl/intl.dart';
 
 class EpisodeListItem extends StatelessWidget {
   const EpisodeListItem({super.key, required this.episode});
 
-  final ScheduleEpisode episode;
+  final Episode episode;
 
   @override
   Widget build(BuildContext context) {
     final formattedTime =
-        DateFormat.Hm().format(DateTime.parse(episode.startTimeUtc));
+        DateFormat.Hm().format(DateTime.parse(episode.startTimeCET));
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
