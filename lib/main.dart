@@ -8,7 +8,6 @@ void main() {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => EpisodeListProvider()),
-        // Add other providers if needed
       ],
       child: const MyApp(),
     ),
@@ -20,12 +19,9 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       title: 'Flutter Demo',
-      theme: ThemeData(
-          // Theme configuration
-          ),
-      home: const MyHomePage(title: 'Tablå för P1'),
+      home: MyHomePage(title: 'Tablå för P1'),
     );
   }
 }

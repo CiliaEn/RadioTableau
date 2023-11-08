@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:intl/intl.dart';
 import 'package:radiotableau/models/episode.dart';
-import 'package:radiotableau/utils/constants.dart';
 import 'package:xml/xml.dart';
 
 class ApiService {
@@ -74,7 +73,6 @@ class ApiService {
 
       return episodes;
     } catch (e) {
-      print('Error fetching data: $e');
       return [];
     }
   }
