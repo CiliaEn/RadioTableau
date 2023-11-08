@@ -17,8 +17,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final apiService = ApiService();
-  bool showAllTodayEpisodes =
-      false; // Flag to control showing all today's episodes
+  bool showAllTodayEpisodes = false;
 
   @override
   void initState() {
@@ -44,7 +43,6 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     final episodeListProvider = Provider.of<EpisodeListProvider>(context);
-
     return DefaultTabController(
       length: 3,
       child: Scaffold(
@@ -61,14 +59,71 @@ class _MyHomePageState extends State<MyHomePage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  const Align(
+                  Align(
                     alignment: Alignment.center,
-                    child: Text(
-                      'Tablå för P1',
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        const Text(
+                          'Tablå för ',
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        DropdownButton<String>(
+                          value: episodeListProvider.channelID,
+                          items: const [
+                            DropdownMenuItem(
+                              value: Constants.p1ID,
+                              child: Text(
+                                'P1',
+                                style: TextStyle(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            DropdownMenuItem(
+                              value: Constants.p2ID,
+                              child: Text(
+                                'P2',
+                                style: TextStyle(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            DropdownMenuItem(
+                              value: Constants.p3ID,
+                              child: Text(
+                                'P3',
+                                style: TextStyle(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            DropdownMenuItem(
+                              value: Constants.p4ID,
+                              child: Text(
+                                'P4',
+                                style: TextStyle(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
+                          onChanged: (newValue) {
+                            setState(() {
+                              episodeListProvider.channelID = newValue;
+                              episodeListProvider.clearEpisodes();
+                              _fetchData();
+                            });
+                          },
+                        ),
+                      ],
                     ),
                   ),
                   const SizedBox(height: 20),
@@ -85,8 +140,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       borderSide: BorderSide(color: Colors.black),
                     ),
                     labelStyle: const TextStyle(fontWeight: FontWeight.bold),
-                    unselectedLabelStyle: const TextStyle(
-                        color: Colors.grey), // Set the tab text color to black
+                    unselectedLabelStyle: const TextStyle(color: Colors.grey),
                     tabs: const <Widget>[
                       Tab(text: 'Igår'),
                       Tab(text: 'Idag'),

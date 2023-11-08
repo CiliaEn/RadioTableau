@@ -1,5 +1,6 @@
 class Episode {
   final String title;
+  final String? subtitle;
   final String description;
   final String startTimeCET;
   final String endTimeCET;
@@ -8,10 +9,11 @@ class Episode {
 
   Episode({
     required this.title,
+    this.subtitle,
     required this.description,
     required this.startTimeCET,
     required this.endTimeCET,
-    required this.programName,
+    this.programName,
     required this.imageUrl,
   });
 }

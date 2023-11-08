@@ -40,7 +40,7 @@ class EpisodeListItem extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              const SizedBox(height: 6),
+              const SizedBox(height: 4),
               if (episode.imageUrl.isNotEmpty)
                 Image.network(
                   episode.imageUrl,
@@ -61,13 +61,21 @@ class EpisodeListItem extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  episode.programName ?? episode.title,
+                  episode.title,
                   style: const TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const SizedBox(height: 6),
+                const SizedBox(height: 4),
+                if (episode.subtitle != null)
+                  Text(
+                    episode.subtitle!,
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 Text(
                   episode.description,
                   style: const TextStyle(

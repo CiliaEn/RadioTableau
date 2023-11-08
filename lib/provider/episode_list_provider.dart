@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:radiotableau/models/episode.dart';
 import 'package:radiotableau/services/api_service.dart';
 import 'package:intl/intl.dart';
+import 'package:radiotableau/utils/constants.dart';
 
 class EpisodeListProvider extends ChangeNotifier {
+  String? channelID = Constants.p1ID;
   List<Episode> yesterdaysEpisodes = [];
   List<Episode> todaysEpisodes = [];
   List<Episode> filteredTodayEpisodes = [];
@@ -16,12 +18,13 @@ class EpisodeListProvider extends ChangeNotifier {
   Future<void> fetchYesterdaysEpisodes() async {
     DateTime yesterday = currentDate.subtract(const Duration(days: 1));
     String formattedDate = dateFormat.format(yesterday);
-    yesterdaysEpisodes.addAll(await apiService.fetchData(formattedDate));
+    yesterdaysEpisodes
+        .addAll(await apiService.fetchData(channelID, formattedDate));
     notifyListeners();
   }
 
   Future<void> fetchTodaysEpisodes() async {
-    todaysEpisodes.addAll(await apiService.fetchData(''));
+    todaysEpisodes.addAll(await apiService.fetchData(channelID, ''));
     filterTodaysEpisodes();
     notifyListeners();
   }
@@ -29,7 +32,8 @@ class EpisodeListProvider extends ChangeNotifier {
   Future<void> fetchTomorrowsEpisodes() async {
     DateTime tomorrow = currentDate.add(const Duration(days: 1));
     String formattedDate = dateFormat.format(tomorrow);
-    tomorrowsEpisodes.addAll(await apiService.fetchData(formattedDate));
+    tomorrowsEpisodes
+        .addAll(await apiService.fetchData(channelID, formattedDate));
     notifyListeners();
   }
 
@@ -41,5 +45,13 @@ class EpisodeListProvider extends ChangeNotifier {
       return episodeStartTime.isAfter(currentDate) ||
           (episodeStartTime.isBefore(now) && episodeEndTime.isAfter(now));
     }).toList();
+  }
+
+  void clearEpisodes() {
+    yesterdaysEpisodes = [];
+    todaysEpisodes = [];
+    filteredTodayEpisodes = [];
+    tomorrowsEpisodes = [];
+    notifyListeners();
   }
 }

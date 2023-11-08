@@ -7,8 +7,8 @@ import 'package:xml/xml.dart';
 class ApiService {
   final dio = Dio();
 
-  Future<List<Episode>> fetchData(String? date, {int page = 1}) async {
-    const String channelID = Constants.channelID;
+  Future<List<Episode>> fetchData(String? channelID, String? date,
+      {int page = 1}) async {
     final inputFormat = DateFormat('yyyy-MM-ddTHH:mm:ssZ');
     final outputFormat = DateFormat('yyyy-MM-dd HH:mm:ss.SSSSSS');
 
@@ -25,6 +25,9 @@ class ApiService {
         final title = element.findElements('title').isNotEmpty
             ? element.findElements('title').single.innerText
             : '';
+        final subtitle = element.findElements('subtitle').isNotEmpty
+            ? element.findElements('subtitle').single.innerText
+            : null;
         final description = element.findElements('description').isNotEmpty
             ? element.findElements('description').single.innerText
             : '';
@@ -52,6 +55,7 @@ class ApiService {
 
         return Episode(
           title: title,
+          subtitle: subtitle,
           description: description,
           startTimeCET: startTimeCET,
           endTimeCET: endTimeCET,
@@ -65,7 +69,7 @@ class ApiService {
 
       if (page < totalPages) {
         final nextPage = page + 1;
-        episodes.addAll(await fetchData(date, page: nextPage));
+        episodes.addAll(await fetchData(channelID, date, page: nextPage));
       }
 
       return episodes;
