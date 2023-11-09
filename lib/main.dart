@@ -1,8 +1,17 @@
 import 'package:flutter/material.dart';
-import 'screens/my_homepage.dart';
+import 'package:provider/provider.dart';
+import 'package:radiotableau/provider/episode_list_provider.dart';
+import 'screens/home.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => EpisodeListProvider()),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -10,12 +19,9 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       title: 'Flutter Demo',
-      theme: ThemeData(
-          // Theme configuration
-          ),
-      home: const MyHomePage(title: 'Tablå för P1 denna vackra dag'),
+      home: MyHomePage(title: 'Tablå för P1'),
     );
   }
 }
