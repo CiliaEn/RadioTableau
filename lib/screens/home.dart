@@ -119,6 +119,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             setState(() {
                               episodeListProvider.channelID = newValue;
                               episodeListProvider.clearEpisodes();
+                              showAllTodayEpisodes = false;
                               _fetchData();
                             });
                           },
